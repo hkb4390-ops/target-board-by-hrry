@@ -1,0 +1,9 @@
+{
+  "installCommand": "npm install --legacy-peer-deps",
+  "regions": ["bom1"],
+  "functions": { "api/tbapi.js": { "maxDuration": 30 } },
+  "rewrites": [
+    { "source": "/tbapi/:path*", "destination": "/api/tbapi" },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ]
+}
