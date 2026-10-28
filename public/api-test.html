@@ -1,0 +1,22 @@
+<!DOCTYPE html><html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>API Test</title><style>body{font-family:sans-serif;background:#0E0F13;color:#eee;padding:12px}button{padding:12px 16px;margin:6px 4px 6px 0;border-radius:8px;border:0;background:#F4BC4A;font-weight:700}pre{white-space:pre-wrap;word-break:break-all;background:#181a20;padding:10px;border-radius:8px;font-size:12px}h4{margin:14px 0 4px}.ok{color:#4ade80}.bad{color:#f87171}</style></head><body>
+<h3>API Test (Vercel proxy)</h3>
+<button onclick="run()">Run all 4 tests</button><button onclick="copyAll()">Copy result</button><div id="out"></div>
+<script>
+const TESTS=[['1. API Status',''],['2. All Courses','courses'],['3. Course Details','courseid=696f785373cd1e3b3306170c'],['4. Video URL','video=B8qhf9zP4c7']];
+let report='';
+async function run(){const o=document.getElementById('out');o.innerHTML='';report='';
+ for(const [name,q] of TESTS){
+  const h=document.createElement('h4'),p=document.createElement('pre');o.append(h,p);h.textContent=name+' …';
+  try{
+   const r=await fetch('/tbapi/api.php'+(q?'?'+q:''),{cache:'no-store'});const t=await r.text();
+   let j=null;try{j=JSON.parse(t)}catch(e){}
+   const ok=r.ok&&j!==null;h.className=ok?'ok':'bad';h.textContent=name+(ok?' ✔ ':' ✘ ')+'HTTP '+r.status+' ('+t.length+' bytes)';
+   p.textContent=ok?t.slice(0,1500):t.slice(0,900);
+   if(!ok){const d=await fetch('/tbapi/api.php?'+(q?q+'&':'')+'_debug=1').then(x=>x.text()).catch(e=>String(e));p.textContent+='\n\n--- debug trace ---\n'+d.slice(0,1500)}
+  }catch(e){h.className='bad';h.textContent=name+' ✘ failed';p.textContent=String(e)}
+  report+='\n## '+h.textContent+'\n'+p.textContent+'\n';}
+}
+function copyAll(){navigator.clipboard.writeText(report).then(()=>alert('Copied'),()=>alert('Copy failed, take a screenshot'))}
+run();
+</script></body></html>
